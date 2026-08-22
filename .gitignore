@@ -1,0 +1,30 @@
+
+# Dataset folders (add the exact folder name you use)
+dataset/
+data/
+images/
+TB_Chest_Xray/
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tif
+*.tiff
+
+# Model weights
+*.pth
+*.pt
+*.ckpt
+*.h5
+*.onnx
+
+# Python & Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.log
+
+# Environment
+.env
+.venv/
+venv/
