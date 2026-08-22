@@ -1,0 +1,92 @@
+# ==============================
+# Core Python / Data Processing
+# ==============================
+numpy
+pandas
+scipy
+PyYAML
+
+# ==============================
+# Computer Vision
+# ==============================
+opencv-python
+Pillow
+albumentations
+
+# ==============================
+# Machine Learning
+# ==============================
+scikit-learn
+xgboost
+
+# ==============================
+# Deep Learning
+# ==============================
+torch
+torchvision
+torchaudio
+
+# ==============================
+# Experiment Tracking / MLOps
+# ==============================
+mlflow
+dvc
+dvc-s3
+
+# ==============================
+# Data Validation / Monitoring
+# ==============================
+evidently
+
+# ==============================
+# API
+# ==============================
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+
+# ==============================
+# Database
+# ==============================
+SQLAlchemy
+psycopg2-binary
+
+# ==============================
+# Monitoring
+# ==============================
+prometheus-client
+
+# ==============================
+# Visualization
+# ==============================
+matplotlib
+seaborn
+
+# ==============================
+# Explainable AI
+# ==============================
+grad-cam
+
+# ==============================
+# Testing
+# ==============================
+pytest
+pytest-cov
+
+# ==============================
+# Code Quality
+# ==============================
+ruff
+black
+
+# ==============================
+# Environment / Configuration
+# ==============================
+python-dotenv
+
+# ==============================
+# Notebook / Development
+# ==============================
+jupyter
+ipykernel
