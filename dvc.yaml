@@ -1,0 +1,15 @@
+stages:
+  pipeline:
+    cmd: python -m src.pipeline
+    deps:
+      - src/pipeline.py
+      - src/data/
+      - src/features/
+      - src/models/
+      - src/evaluation/
+      - data/raw/
+      - params.yaml
+    outs:
+      - artifacts/models/best_model.pth
+      - artifacts/evaluation/evaluation_metrics.json
+    
