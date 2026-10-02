@@ -1,0 +1,23 @@
+artifact_path: file:///C:/Users/Pujan Pandey/OneDrive/Projects/Medical-imaging-MLOps/mlruns/1/models/m-90bed31b9ec645fda3338c1d07748908/artifacts
+flavors:
+  python_function:
+    config:
+      device: null
+    data: data
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pytorch
+    pickle_module_name: mlflow.pytorch.pickle_module
+    python_version: 3.11.17
+  pytorch:
+    code: null
+    model_data: data
+    pytorch_version: 2.14.1+cpu
+mlflow_version: 3.16.1
+model_id: m-90bed31b9ec645fda3338c1d07748908
+model_size_bytes: 44793959
+model_uuid: m-90bed31b9ec645fda3338c1d07748908
+prompts: null
+run_id: 639282c3a11044b58ba670d04067b46b
+utc_time_created: '2026-10-02 14:21:28.278995'

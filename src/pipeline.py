@@ -2,11 +2,15 @@ from src.logger import logger
 
 from src.data.ingestion import ingest_data
 from src.data.preprocessing import create_data_loaders
-import torch
+
 from src.models.model import create_model
 from src.models.train import train_model
-
 from src.evaluation.evaluate import evaluate_model
+
+import torch
+import mlflow
+
+
 def main():
 
     logger.info("========================================")
@@ -17,19 +21,18 @@ def main():
     # 1. DATA INGESTION
     # ============================================================
 
-    logger.info("Step 1/5: Data ingestion")
+    logger.info("Step 1/6: Data ingestion")
 
-    ingest_data(
-    )
+    ingest_data()
 
     # ============================================================
     # 2. DATA PREPROCESSING
     # ============================================================
 
-    logger.info("Step 2/5: Data preprocessing")
+    logger.info("Step 2/6: Data preprocessing")
 
     train_loader, val_loader, test_loader, dataset_info = create_data_loaders(
-    data_dir="data/raw/chest",
+        data_dir="data/raw/chest",
         batch_size=16,
         train_ratio=0.70,
         val_ratio=0.15,
@@ -42,7 +45,7 @@ def main():
     logger.info(f"Dataset information: {dataset_info}")
 
     # ============================================================
-    # 3. DEVICE
+    # 3. DEVICE + MLflow SETUP
     # ============================================================
 
     device = torch.device(
@@ -51,11 +54,18 @@ def main():
 
     logger.info(f"Using device: {device}")
 
+    # MLflow configuration
+    mlflow.set_tracking_uri("sqlite:///mlflow.db")
+
+    mlflow.set_experiment(
+        "Medical-Imaging-TB-Classification"
+    )
+
     # ============================================================
     # 4. MODEL CREATION
     # ============================================================
 
-    logger.info("Step 3/5: Creating model")
+    logger.info("Step 3/6: Creating model")
 
     model = create_model(
         num_classes=2,
@@ -65,43 +75,118 @@ def main():
     model = model.to(device)
 
     # ============================================================
-    # 5. TRAINING
+    # 5. TRAINING + EVALUATION
     # ============================================================
 
-    logger.info("Step 4/5: Training model")
+    logger.info("Step 4/6: Training model")
 
-    training_results = train_model(
-        model=model,
-        train_loader=train_loader,
-        val_loader=val_loader,
-        device=device,
-        epochs=5,
-        learning_rate=0.0001,
-        class_weights=None,
-        save_dir="artifacts/models"
-    )
+    with mlflow.start_run():
 
-    logger.info(f"Training results: {training_results}")
+        # --------------------------------------------------------
+        # Log parameters
+        # --------------------------------------------------------
+
+        mlflow.log_params({
+            "model": "ResNet18",
+            "pretrained": True,
+            "epochs": 1,
+            "learning_rate": 0.001,
+            "batch_size": 16,
+            "image_size": 224,
+            "train_size": dataset_info["train_size"],
+            "validation_size": dataset_info["val_size"],
+            "test_size": dataset_info["test_size"],
+            "total_size": dataset_info["total_size"],
+            "device": str(device)
+        })
+
+        # --------------------------------------------------------
+        # Train model
+        # --------------------------------------------------------
+
+        training_results = train_model(
+            model=model,
+            train_loader=train_loader,
+            val_loader=val_loader,
+            device=device,
+            epochs=1,
+            learning_rate=0.001,
+            class_weights=None,
+            save_dir="artifacts/models"
+        )
+
+        logger.info(
+            f"Training results: {training_results}"
+        )
+
+        # --------------------------------------------------------
+        # Log training metrics
+        # --------------------------------------------------------
+
+        mlflow.log_metrics({
+            "train_loss": training_results["train_loss"][-1],
+            "train_accuracy": training_results["train_acc"][-1],
+            "val_loss": training_results["val_loss"][-1],
+            "val_accuracy": training_results["val_acc"][-1]
+        })
+
+        # ========================================================
+        # EVALUATION
+        # ========================================================
+
+        logger.info("Step 5/6: Evaluating model")
+
+        class_names = [
+            "Normal",
+            "Tuberculosis"
+        ]
+
+        metrics, predictions, targets = evaluate_model(
+            model=model,
+            data_loader=test_loader,
+            device=device,
+            class_names=class_names
+        )
+
+        logger.info(
+            f"Evaluation metrics: {metrics}"
+        )
+
+        # --------------------------------------------------------
+        # Log test metrics
+        # --------------------------------------------------------
+
+        mlflow.log_metrics({
+            "test_accuracy": metrics["accuracy"],
+            "test_precision": metrics["precision"],
+            "test_recall": metrics["recall"],
+            "test_f1": metrics["f1"]
+        })
+
+        # --------------------------------------------------------
+        # Register model in MLflow Model Registry
+        # --------------------------------------------------------
+
+        logger.info(
+            "Registering model: TB-ResNet18"
+        )
+
+        mlflow.pytorch.log_model(
+            model,
+            name="model",
+            registered_model_name="TB-ResNet18",
+            serialization_format="pickle"
+        )
+
+        logger.info(
+            "Model registered successfully: TB-ResNet18"
+        )
 
     # ============================================================
-    # 6. EVALUATION
+    # 6. PIPELINE COMPLETE
     # ============================================================
 
-    logger.info("Step 5/5: Evaluating model")
-
-    class_names = [
-        "Normal",
-        "Tuberculosis"
-    ]
-
-    metrics, predictions, targets = evaluate_model(
-        model=model,
-        data_loader=test_loader,
-        device=device,
-        class_names=class_names
-    )
-
-    logger.info(f"Evaluation metrics: {metrics}")
+    logger.info("Step 6/6: Pipeline completed")
 
     logger.info("========================================")
     logger.info("Medical Imaging ML Pipeline Completed")
