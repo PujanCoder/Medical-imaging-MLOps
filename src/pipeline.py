@@ -20,9 +20,6 @@ def main():
     logger.info("Step 1/5: Data ingestion")
 
     ingest_data(
-        source_dir="data/raw/chest",
-        destination_dir="data/processed/chest",
-        classes=["Normal", "Tuberculosis"]
     )
 
     # ============================================================
