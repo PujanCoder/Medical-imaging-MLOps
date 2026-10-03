@@ -3,7 +3,7 @@ import torch
 import mlflow.pytorch
 from PIL import Image
 
-MODEL_PATH = "/app/mlruns/1/models/m-3948c520e5ac4d57b470c886d1cde089/artifacts"
+MODEL_PATH = "mlruns/1/models/m-3948c520e5ac4d57b470c886d1cde089/artifacts"
 IMAGE_SIZE = (224, 224)
 
 CLASS_NAMES = [
