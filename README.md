@@ -6,6 +6,32 @@ The project goes beyond model training by implementing **experiment tracking, mo
 
 ---
 
+## 🛠️ Tech Stack
+
+### Machine Learning
+![Python](https://img.shields.io/badge/Python-3.11+-blue?logo=python)
+![PyTorch](https://img.shields.io/badge/PyTorch-Deep%20Learning-ee4c2c?logo=pytorch)
+![Torchvision](https://img.shields.io/badge/Torchvision-Computer%20Vision-ee4c2c?logo=pytorch)
+![NumPy](https://img.shields.io/badge/NumPy-Numerical%20Computing-013243?logo=numpy)
+![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange?logo=scikit-learn)
+
+### MLOps
+![MLflow](https://img.shields.io/badge/MLflow-Experiment%20Tracking-blue?logo=mlflow)
+![FastAPI](https://img.shields.io/badge/FastAPI-REST%20API-009688?logo=fastapi)
+![Prometheus](https://img.shields.io/badge/Prometheus-Monitoring-E6522C?logo=prometheus)
+![Grafana](https://img.shields.io/badge/Grafana-Observability-F46800?logo=grafana)
+
+### Image Processing
+![Pillow](https://img.shields.io/badge/Pillow-Image%20Processing-3776AB?logo=python)
+
+### Development
+![Conda](https://img.shields.io/badge/Conda-Environment-44A833?logo=anaconda)
+![Git](https://img.shields.io/badge/Git-Version%20Control-F05032?logo=git)
+![GitHub](https://img.shields.io/badge/GitHub-Code%20Hosting-181717?logo=github)
+
+### License
+![License](https://img.shields.io/badge/License-MIT-green)
+
 ## 🚀 Project Overview
 
 This project builds a complete machine-learning lifecycle:
