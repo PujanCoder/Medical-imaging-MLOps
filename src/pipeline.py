@@ -9,6 +9,7 @@ from src.evaluation.evaluate import evaluate_model
 
 import torch
 import mlflow
+from mlflow.models import infer_signature
 
 
 def main():
@@ -17,18 +18,11 @@ def main():
     logger.info("Starting Medical Imaging ML Pipeline")
     logger.info("========================================")
 
-    # ============================================================
     # 1. DATA INGESTION
-    # ============================================================
-
     logger.info("Step 1/6: Data ingestion")
-
     ingest_data()
 
-    # ============================================================
     # 2. DATA PREPROCESSING
-    # ============================================================
-
     logger.info("Step 2/6: Data preprocessing")
 
     train_loader, val_loader, test_loader, dataset_info = create_data_loaders(
@@ -44,27 +38,20 @@ def main():
 
     logger.info(f"Dataset information: {dataset_info}")
 
-    # ============================================================
-    # 3. DEVICE + MLflow SETUP
-    # ============================================================
-
+    # 3. DEVICE + MLFLOW SETUP
     device = torch.device(
         "cuda" if torch.cuda.is_available() else "cpu"
     )
 
     logger.info(f"Using device: {device}")
 
-    # MLflow configuration
     mlflow.set_tracking_uri("sqlite:///mlflow.db")
 
     mlflow.set_experiment(
         "Medical-Imaging-TB-Classification"
     )
 
-    # ============================================================
     # 4. MODEL CREATION
-    # ============================================================
-
     logger.info("Step 3/6: Creating model")
 
     model = create_model(
@@ -74,17 +61,10 @@ def main():
 
     model = model.to(device)
 
-    # ============================================================
     # 5. TRAINING + EVALUATION
-    # ============================================================
-
     logger.info("Step 4/6: Training model")
 
     with mlflow.start_run():
-
-        # --------------------------------------------------------
-        # Log parameters
-        # --------------------------------------------------------
 
         mlflow.log_params({
             "model": "ResNet18",
@@ -99,10 +79,6 @@ def main():
             "total_size": dataset_info["total_size"],
             "device": str(device)
         })
-
-        # --------------------------------------------------------
-        # Train model
-        # --------------------------------------------------------
 
         training_results = train_model(
             model=model,
@@ -119,10 +95,6 @@ def main():
             f"Training results: {training_results}"
         )
 
-        # --------------------------------------------------------
-        # Log training metrics
-        # --------------------------------------------------------
-
         mlflow.log_metrics({
             "train_loss": training_results["train_loss"][-1],
             "train_accuracy": training_results["train_acc"][-1],
@@ -130,10 +102,7 @@ def main():
             "val_accuracy": training_results["val_acc"][-1]
         })
 
-        # ========================================================
         # EVALUATION
-        # ========================================================
-
         logger.info("Step 5/6: Evaluating model")
 
         class_names = [
@@ -152,10 +121,6 @@ def main():
             f"Evaluation metrics: {metrics}"
         )
 
-        # --------------------------------------------------------
-        # Log test metrics
-        # --------------------------------------------------------
-
         mlflow.log_metrics({
             "test_accuracy": metrics["accuracy"],
             "test_precision": metrics["precision"],
@@ -163,29 +128,39 @@ def main():
             "test_f1": metrics["f1"]
         })
 
-        # --------------------------------------------------------
-        # Register model in MLflow Model Registry
-        # --------------------------------------------------------
-
+        # MLFLOW MODEL REGISTRATION
         logger.info(
             "Registering model: TB-ResNet18"
+        )
+
+        sample_inputs, _ = next(iter(test_loader))
+
+        sample_inputs = sample_inputs[:1].to(device)
+
+        model.eval()
+
+        with torch.no_grad():
+            sample_outputs = model(sample_inputs)
+
+        signature = infer_signature(
+            sample_inputs.cpu().numpy(),
+            sample_outputs.cpu().numpy()
         )
 
         mlflow.pytorch.log_model(
             model,
             name="model",
             registered_model_name="TB-ResNet18",
-            serialization_format="pickle"
+            serialization_format="pickle",
+            input_example=sample_inputs.cpu().numpy(),
+            signature=signature
         )
 
         logger.info(
             "Model registered successfully: TB-ResNet18"
         )
 
-    # ============================================================
     # 6. PIPELINE COMPLETE
-    # ============================================================
-
     logger.info("Step 6/6: Pipeline completed")
 
     logger.info("========================================")

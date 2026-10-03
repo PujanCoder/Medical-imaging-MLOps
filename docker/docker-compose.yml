@@ -1,0 +1,15 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+
+    container_name: medical-tb-api
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - ../mlruns:/app/mlruns       # relative to this compose file, not to context
+
+    restart: unless-stopped

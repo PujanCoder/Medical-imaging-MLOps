@@ -90,3 +90,4 @@ python-dotenv
 # ==============================
 jupyter
 ipykernel
+prometheus-client
