@@ -1,0 +1,44 @@
+{
+    "accuracy": 0.8666666666666667,
+    "precision": 0.8852097130242825,
+    "recall": 0.8666666666666667,
+    "f1": 0.8304724024841253,
+    "loss": null,
+    "classification_report": {
+        "Normal": {
+            "precision": 0.8609271523178808,
+            "recall": 1.0,
+            "f1-score": 0.9252669039145908,
+            "support": 520.0
+        },
+        "Tuberculosis": {
+            "precision": 1.0,
+            "recall": 0.23636363636363636,
+            "f1-score": 0.38235294117647056,
+            "support": 110.0
+        },
+        "accuracy": 0.8666666666666667,
+        "macro avg": {
+            "precision": 0.9304635761589404,
+            "recall": 0.6181818181818182,
+            "f1-score": 0.6538099225455307,
+            "support": 630.0
+        },
+        "weighted avg": {
+            "precision": 0.8852097130242825,
+            "recall": 0.8666666666666667,
+            "f1-score": 0.8304724024841253,
+            "support": 630.0
+        }
+    },
+    "confusion_matrix": [
+        [
+            520,
+            0
+        ],
+        [
+            84,
+            26
+        ]
+    ]
+}
